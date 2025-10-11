@@ -3,7 +3,7 @@ services:
     build: .
     image: repository-proxy:latest
     ports:
-      - 8080:8080
+      - 8082:8082
     environment:
-      - PORT=8080
+      - PORT=8082
       - ALLOWED_ORIGINS=*

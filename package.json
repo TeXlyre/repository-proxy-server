@@ -5,7 +5,7 @@
     "author": "Fares Abawi <fares@abawi.me> (https://abawi.me)",
     "license": "MIT",
     "scripts": {
-        "dev": "nodemon --exec ts-node src/server.ts",
+        "dev": "PORT=8082 nodemon --exec ts-node src/server.ts",
         "build": "tsc",
         "start": "node dist/server.js",
         "docker:local:build": "docker compose -f docker-compose.yml build",

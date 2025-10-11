@@ -1,32 +1,19 @@
-const ALLOWED_HOSTS = [
-    'github.com',
-    'gitlab.com',
-    'codeberg.org'
-];
+import type { Request, Response, NextFunction } from 'express';
 
-export const validateRepositoryUrl = (url: string): { valid: boolean; error?: string } => {
-    try {
-        const urlObj = new URL(url);
+export const corsMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const origin = req.headers.origin;
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['*'];
 
-        if (!ALLOWED_HOSTS.includes(urlObj.hostname)) {
-            return {
-                valid: false,
-                error: `Only ${ALLOWED_HOSTS.join(', ')} repositories are allowed`
-            };
-        }
-
-        if (urlObj.protocol !== 'https:') {
-            return {
-                valid: false,
-                error: 'Only HTTPS URLs are allowed'
-            };
-        }
-
-        return { valid: true };
-    } catch {
-        return {
-            valid: false,
-            error: 'Invalid URL format'
-        };
+    if (allowedOrigins.includes('*') || (origin && allowedOrigins.includes(origin))) {
+        res.setHeader('Access-Control-Allow-Origin', origin || '*');
     }
+
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+
+    next();
 };
