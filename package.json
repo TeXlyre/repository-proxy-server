@@ -1,0 +1,32 @@
+{
+    "name": "repository-proxy",
+    "version": "1.0.0",
+    "description": "Simple CORS proxy for GitHub, GitLab, and Codeberg repositories",
+    "author": "Fares Abawi <fares@abawi.me> (https://abawi.me)",
+    "license": "MIT",
+    "scripts": {
+        "dev": "nodemon --exec ts-node src/server.ts",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "docker:local:build": "docker compose -f docker-compose.yml build",
+        "docker:local:up": "docker compose -f docker-compose.yml up -d",
+        "docker:local:down": "docker compose -f docker-compose.yml down",
+        "docker:build": "docker compose -f docker-compose.cloudflare.yml build",
+        "docker:up": "docker compose -f docker-compose.cloudflare.yml up -d",
+        "docker:down": "docker compose -f docker-compose.cloudflare.yml down",
+        "docker:logs": "docker compose -f docker-compose.cloudflare.yml logs -f",
+        "tunnel:setup": "chmod +x ./scripts/run_proxy_cloudflare_tunnel.sh",
+        "tunnel:start": "bash -c 'source ./.env && ./scripts/run_proxy_cloudflare_tunnel.sh \"${CLOUDFLARE_API_KEY}\" \"${HOST_DOMAIN}\"'",
+        "deploy:full": "pnpm docker:up && pnpm tunnel:setup && pnpm tunnel:start"
+    },
+    "dependencies": {
+        "express": "^5.0.0"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.10.2",
+        "nodemon": "^3.0.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.0.0"
+    }
+}

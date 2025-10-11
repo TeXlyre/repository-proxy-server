@@ -1,0 +1,4 @@
+NODE_ENV=production
+HOST_DOMAIN=proxy.emaily.re
+ALLOWED_ORIGINS=*
+CLOUDFLARE_API_KEY=your_cloudflare_api_key

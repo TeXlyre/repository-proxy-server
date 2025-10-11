@@ -1,0 +1,12 @@
+services:
+  repository-proxy:
+    build: .
+    image: repository-proxy:latest
+    ports:
+      - 127.0.0.1:8080:8080
+    environment:
+      - PORT=8080
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - CLOUDFLARE_TUNNEL=true
+    env_file:
+      - .env
