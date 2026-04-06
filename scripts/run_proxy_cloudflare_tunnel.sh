@@ -22,7 +22,7 @@ fi
 
 CLOUDFLARE_TOKEN="$API_KEY"
 TUNNEL_NAME="repository-proxy"
-HTTP_SERVICE_URL="http://localhost:8080"
+HTTP_SERVICE_URL="http://localhost:8082"
 HOSTNAME="$HOST_DOMAIN"
 CREDENTIALS_DIR=~/.cloudflared/repository-proxy
 CONFIG_FILE="$CREDENTIALS_DIR/config.yml"
