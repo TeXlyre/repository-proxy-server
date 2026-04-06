@@ -26,9 +26,13 @@ app.get('/', async (req, res) => {
             }
         });
 
+        const contentDisposition = response.headers.get('content-disposition');
+        const filename = new URL(targetUrl).pathname.split('/').pop() || 'download';
+
         res.set({
             'Content-Type': response.headers.get('content-type') || 'application/octet-stream',
             'Content-Length': response.headers.get('content-length') || '',
+            'Content-Disposition': contentDisposition || `attachment; filename="${filename}"`,
             'Cache-Control': 'public, max-age=3600'
         });
 
