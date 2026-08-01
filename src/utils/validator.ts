@@ -1,11 +1,24 @@
-const ALLOWED_HOSTS = [
+const DEFAULT_ALLOWED_HOSTS = [
     'github.com',
     'githubusercontent.com',
     'gitlab.com',
-    'codeberg.org'
+    'codeberg.org',
+    'gitea.com',
+    'code.forgejo.org',
+    'salsa.debian.org',
+    'gitlab.gnome.org',
+    'gitlab.freedesktop.org',
+    'invent.kde.org',
+    'framagit.org',
+    'gitlab.inria.fr'
 ];
 
-export const isAllowedHost = (hostname: string): boolean =>
+const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS
+    ?.split(',')
+    .map((host) => host.trim().toLowerCase())
+    .filter(Boolean) ?? DEFAULT_ALLOWED_HOSTS;
+
+const isAllowedHost = (hostname: string): boolean =>
     ALLOWED_HOSTS.some(
         (host) => hostname === host || hostname.endsWith(`.${host}`)
     );
@@ -14,17 +27,17 @@ export const validateRepositoryUrl = (url: string): { valid: boolean; error?: st
     try {
         const urlObj = new URL(url);
 
-        if (!isAllowedHost(urlObj.hostname)) {
-            return {
-                valid: false,
-                error: `Only ${ALLOWED_HOSTS.join(', ')} repositories are allowed`
-            };
-        }
-
         if (urlObj.protocol !== 'https:') {
             return {
                 valid: false,
                 error: 'Only HTTPS URLs are allowed'
+            };
+        }
+
+        if (!isAllowedHost(urlObj.hostname.toLowerCase())) {
+            return {
+                valid: false,
+                error: `Host not allowed: ${urlObj.hostname}`
             };
         }
 
