@@ -26,6 +26,7 @@ const isAllowedHost = (hostname: string): boolean =>
     ALLOWED_HOSTS.some(
         (host) => hostname === host || hostname.endsWith(`.${host}`)
     );
+export const getAllowedHosts = (): string[] => [...ALLOWED_HOSTS];
 
 const DEFAULT_MAX_DOWNLOAD_BYTES = 512 * 1024 * 1024;
 
