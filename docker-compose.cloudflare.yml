@@ -7,6 +7,7 @@ services:
     environment:
       - PORT=8082
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - CLOUDFLARE_TUNNEL=true
     env_file:
       - .env

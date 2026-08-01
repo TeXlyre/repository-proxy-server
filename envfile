@@ -1,4 +1,5 @@
 NODE_ENV=production
 HOST_DOMAIN=proxy.texlyre.org
 ALLOWED_ORIGINS=*
+ALLOWED_HOSTS=
 CLOUDFLARE_API_KEY=your_cloudflare_api_key

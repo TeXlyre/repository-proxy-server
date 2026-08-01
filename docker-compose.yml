@@ -7,3 +7,4 @@ services:
     environment:
       - PORT=8082
       - ALLOWED_ORIGINS=*
+      - ALLOWED_HOSTS=
