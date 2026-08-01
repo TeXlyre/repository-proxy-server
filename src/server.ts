@@ -5,16 +5,43 @@ import { corsMiddleware } from './middleware/cors';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+const MAX_REDIRECTS = 5;
 
 app.use(corsMiddleware);
 
-const downloadBuffer = (targetUrl: string): Promise<{ buffer: Buffer; headers: import('http').IncomingHttpHeaders }> => {
+const downloadBuffer = (
+    targetUrl: string,
+    redirectsLeft: number = MAX_REDIRECTS
+): Promise<{ buffer: Buffer; headers: import('http').IncomingHttpHeaders }> => {
     return new Promise((resolve, reject) => {
         const req = https.get(targetUrl, {
             headers: { 'User-Agent': 'Repository-Proxy/1.0' }
         }, (response) => {
-            if (response.statusCode && response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
-                downloadBuffer(response.headers.location).then(resolve).catch(reject);
+            const status = response.statusCode ?? 0;
+
+            if (status >= 300 && status < 400 && response.headers.location) {
+                response.resume();
+
+                if (redirectsLeft <= 0) {
+                    reject(new Error('Too many redirects'));
+                    return;
+                }
+
+                const redirectUrl = new URL(response.headers.location, targetUrl).toString();
+                const validation = validateRepositoryUrl(redirectUrl);
+
+                if (!validation.valid) {
+                    reject(new Error(validation.error));
+                    return;
+                }
+
+                downloadBuffer(redirectUrl, redirectsLeft - 1).then(resolve).catch(reject);
+                return;
+            }
+
+            if (status < 200 || status >= 300) {
+                response.resume();
+                reject(new Error(`Upstream responded with ${status}`));
                 return;
             }
 
@@ -55,7 +82,9 @@ app.get('/', async (req, res) => {
         res.send(buffer);
     } catch (error) {
         if (!res.headersSent) {
-            res.status(500).json({ error: 'Failed to fetch repository' });
+            res.status(502).json({
+                error: error instanceof Error ? error.message : 'Failed to fetch repository'
+            });
         }
     }
 });
