@@ -13,10 +13,14 @@ const DEFAULT_ALLOWED_HOSTS = [
     'gitlab.inria.fr'
 ];
 
-const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS
-    ?.split(',')
+const configuredHosts = (process.env.ALLOWED_HOSTS ?? '')
+    .split(',')
     .map((host) => host.trim().toLowerCase())
-    .filter(Boolean) ?? DEFAULT_ALLOWED_HOSTS;
+    .filter(Boolean);
+
+const ALLOWED_HOSTS = configuredHosts.length > 0
+    ? configuredHosts
+    : DEFAULT_ALLOWED_HOSTS;
 
 const isAllowedHost = (hostname: string): boolean =>
     ALLOWED_HOSTS.some(
