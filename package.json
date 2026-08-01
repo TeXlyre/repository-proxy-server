@@ -1,6 +1,6 @@
 {
     "name": "repository-proxy",
-    "version": "1.0.0",
+    "version": "0.2.0",
     "description": "Simple CORS proxy for GitHub, GitLab, and Codeberg repositories",
     "author": "Fares Abawi <fares@abawi.me> (https://abawi.me)",
     "license": "MIT",
