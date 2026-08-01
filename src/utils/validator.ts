@@ -23,6 +23,15 @@ const isAllowedHost = (hostname: string): boolean =>
         (host) => hostname === host || hostname.endsWith(`.${host}`)
     );
 
+const DEFAULT_MAX_DOWNLOAD_BYTES = 512 * 1024 * 1024;
+
+const parsedMaxDownloadBytes = Number.parseInt(process.env.MAX_DOWNLOAD_BYTES ?? '', 10);
+
+export const MAX_DOWNLOAD_BYTES =
+    Number.isFinite(parsedMaxDownloadBytes) && parsedMaxDownloadBytes > 0
+        ? parsedMaxDownloadBytes
+        : DEFAULT_MAX_DOWNLOAD_BYTES;
+
 export const validateRepositoryUrl = (url: string): { valid: boolean; error?: string } => {
     try {
         const urlObj = new URL(url);

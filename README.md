@@ -55,6 +55,7 @@ pnpm docker:local:up
 - `HOST_DOMAIN`: Domain for the proxy (e.g., proxy.emaily.re)
 - `ALLOWED_ORIGINS`: Comma-separated allowed origins or `*` for all
 - `ALLOWED_HOSTS`: Comma-separated hosts the proxy may download from. Leave empty to use the built-in defaults. Each entry matches the host itself and any of its subdomains, so `github.com` also covers `codeload.github.com`.
+- `MAX_DOWNLOAD_BYTES`: Maximum response size the proxy will buffer, in bytes. Defaults to 536870912 (512 MB). Requests whose `Content-Length` or actual body exceeds this are rejected with 502.
 - `CLOUDFLARE_API_KEY`: Cloudflare Global API key
 
 Default `ALLOWED_HOSTS`:

@@ -8,3 +8,4 @@ services:
       - PORT=8082
       - ALLOWED_ORIGINS=*
       - ALLOWED_HOSTS=
+      - MAX_DOWNLOAD_BYTES=

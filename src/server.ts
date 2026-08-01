@@ -1,6 +1,7 @@
 import express from 'express';
 import https from 'https';
-import { validateRepositoryUrl } from './utils/validator';
+
+import { validateRepositoryUrl, getAllowedHosts, MAX_DOWNLOAD_BYTES } from './utils/validator';
 import { corsMiddleware } from './middleware/cors';
 
 const app = express();
@@ -45,8 +46,29 @@ const downloadBuffer = (
                 return;
             }
 
+            const declaredLength = Number.parseInt(response.headers['content-length'] ?? '', 10);
+
+            if (Number.isFinite(declaredLength) && declaredLength > MAX_DOWNLOAD_BYTES) {
+                response.destroy();
+                reject(new Error(`Response exceeds ${MAX_DOWNLOAD_BYTES} bytes`));
+                return;
+            }
+
             const chunks: Buffer[] = [];
-            response.on('data', (chunk) => chunks.push(chunk));
+            let received = 0;
+
+            response.on('data', (chunk: Buffer) => {
+                received += chunk.byteLength;
+
+                if (received > MAX_DOWNLOAD_BYTES) {
+                    response.destroy();
+                    reject(new Error(`Response exceeds ${MAX_DOWNLOAD_BYTES} bytes`));
+                    return;
+                }
+
+                chunks.push(chunk);
+            });
+
             response.on('end', () => resolve({ buffer: Buffer.concat(chunks), headers: response.headers }));
             response.on('error', reject);
         });
